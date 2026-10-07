@@ -1,0 +1,1 @@
+"""Explicit adapter namespace."""

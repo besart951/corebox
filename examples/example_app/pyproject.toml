@@ -1,0 +1,9 @@
+[project]
+name = "foundation-example-consumer"
+version = "0.1.0"
+requires-python = ">=3.15"
+dependencies = ["app-foundation[postgres,smtp]", "uvicorn>=0.37"]
+
+# Published consumers remove this local development source.
+[tool.uv.sources]
+app-foundation = { path = "../.." }

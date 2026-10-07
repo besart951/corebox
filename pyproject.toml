@@ -1,0 +1,59 @@
+[build-system]
+requires = ["hatchling>=1.27"]
+build-backend = "hatchling.build"
+
+[project]
+name = "app-foundation"
+version = "0.1.0"
+description = "Explicit, typed application capabilities for independently deployed Python applications"
+readme = "README.md"
+requires-python = ">=3.15"
+license = "LicenseRef-Proprietary"
+dependencies = [
+  "pydantic>=2.12,<3", "pydantic-settings>=2.11,<3", "fastapi>=0.118,<1",
+  "sqlalchemy[asyncio]>=2.1,<2.2", "alembic>=1.17,<2",
+  "croniter>=6,<7", "argon2-cffi>=25.1", "PyJWT[crypto]>=2.10,<3", "cryptography>=46",
+]
+
+[project.optional-dependencies]
+postgres = ["psycopg[binary]>=3.2,<4"]
+google = ["httpx>=0.28,<1", "google-auth>=2.40,<3", "requests>=2.32,<3"]
+stripe = ["stripe>=13,<15", "httpx>=0.28,<1"]
+smtp = ["aiosmtplib>=5,<6"]
+email = ["aiosmtplib>=5,<6"]
+whatsapp = ["httpx>=0.28,<1"]
+documents = ["jinja2>=3.1.6,<4"]
+realtime = []
+all = ["app-foundation[postgres,google,stripe,smtp,whatsapp,documents,realtime]"]
+
+[dependency-groups]
+dev = ["ruff>=0.14", "ty>=0.0.1", "pytest>=8.4", "pytest-asyncio>=1.2", "httpx>=0.28", "aiosqlite>=0.21", "uvicorn>=0.37", "fastapi-cli>=0.0.13"]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/app_foundation"]
+
+[tool.hatch.build.targets.sdist]
+exclude = [".agents", "python_app_foundation_master_prompt.md"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py315"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "UP", "B", "SIM", "C4", "PERF", "RUF", "ARG", "ANN", "ASYNC", "TRY", "RET", "PTH", "PIE", "T20", "S"]
+# Exception messages are intentionally local; explicit exception chaining remains required.
+ignore = ["TRY003", "S101"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["S105", "S106", "S311"]
+
+[tool.ty.environment]
+python-version = "3.15"
+
+[tool.ty.rules]
+all = "error"
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
+markers = ["postgres: requires FOUNDATION_TEST_DATABASE_URL"]
